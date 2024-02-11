@@ -27,10 +27,18 @@ def input_pdf_text(uploaded_file):
 
 input_prompt="""
 Hey, act like a skilled or very experienced ATS (Application Tracking System) with a deep understanding of the tech field, software engineering, data science, data analysis, and big data engineering. Your task is to evaluate the provided resume in alignment with the given job description. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing keywords with high accuracy. Also, anticipate potential questions that a recruiter might ask based on the job description.
+
 Resume: {text}
 
-Please provide the response in one single string with the structure:
-{{"JD Match": "%", "Missing Keywords": [], "Profile Summary": ""}}
+Please provide the response in a professional format:
+
+JD Match: %
+Missing Keywords: 
+Profile Summary: 
+Anticipated Questions:
+- 
+- 
+- 
 """
 
 
