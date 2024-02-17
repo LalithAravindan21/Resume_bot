@@ -25,8 +25,12 @@ def input_pdf_text(uploaded_file):
     return text
 
 
-input_prompt="""
-Hey, act like a skilled or very experienced ATS (Application Tracking System) with a deep understanding of the tech field, software engineering, data science, data analysis, and big data engineering. Your task is to evaluate the provided resume in alignment with the given job description for the desired position: {desired_position}. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing keywords with high accuracy. Also, anticipate potential questions that a recruiter might ask based on the job description.
+input_prompt = """
+Hello! I'm here to assist you as an experienced ATS (Application Tracking System) specializing in the tech industry. To provide you with the best feedback, please specify the position you're interested in:
+
+Desired Position: {desired_position}
+
+Now, please share your resume, and I'll evaluate it based on the provided job description and your desired position. Considering the competitiveness of the job market, I'll assess the resume's alignment with the job requirements, assign a percentage match, identify any missing keywords, and provide a profile summary highlighting your relevant experiences and skills.
 
 Resume: {text}
 
@@ -40,8 +44,7 @@ Anticipated Questions:
 - 
 - 
 
-Based on the resume, provide insights into the candidate's past projects, experiences, and expertise that align with the desired position mentioned in the resume itself.
-
+Additionally, I'll analyze your past projects and experiences mentioned in the resume to assess how well they align with the desired position.
 """
 
 
