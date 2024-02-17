@@ -26,25 +26,17 @@ def input_pdf_text(uploaded_file):
 
 
 input_prompt = """
-Hello! I'm here to assist you as an experienced ATS (Application Tracking System) specializing in the tech industry. To provide you with the best feedback, please specify the position you're interested in:
+Hey, act like an experienced ATS (Applicant Tracking System) with a deep understanding of various industries such as tech, finance, and healthcare. Your task is to evaluate the provided resume in alignment with the given job description. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing keywords with high accuracy. Additionally, anticipate potential questions that a recruiter might ask based on the job description.
 
-Desired Position: {desired_position}
-
-Now, please share your resume, and I'll evaluate it based on the provided job description and your desired position. Considering the competitiveness of the job market, I'll assess the resume's alignment with the job requirements, assign a percentage match, identify any missing keywords, and provide a profile summary highlighting your relevant experiences and skills.
-
-Resume: {text}
-
-Please provide the response in a professional format:
-
-JD Match: %
-Missing Keywords: 
-Profile Summary: 
-Anticipated Questions:
-- 
-- 
-- 
-
-Additionally, I'll analyze your past projects and experiences mentioned in the resume to assess how well they align with the desired position.
+Please provide the response in the following format:
+{
+    "JD Match": "Percentage",
+    "Missing Keywords": ["Keyword1", "Keyword2", ...],
+    "Profile Summary": "Suggestions for profile summary enhancements",
+    "Potential Interview Questions": ["Question 1", "Question 2", ...],
+    "Past Projects": ["Project 1", "Project 2", ...],
+    "Desired Position Match": "Percentage"
+}
 """
 
 
