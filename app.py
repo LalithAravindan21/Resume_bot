@@ -39,6 +39,9 @@ Anticipated Questions:
 - 
 - 
 - 
+
+Based on the resume, provide insights into the candidate's past projects, experiences, and expertise that align with the desired position.
+
 """
 
 
