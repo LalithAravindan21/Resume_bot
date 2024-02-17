@@ -26,19 +26,35 @@ def input_pdf_text(uploaded_file):
 
 
 input_prompt = """
-Hey, act like an experienced ATS (Applicant Tracking System) with a deep understanding of various industries such as tech, finance, and healthcare. Your task is to evaluate the provided resume in alignment with the given job description. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing keywords with high accuracy. Additionally, anticipate potential questions that a recruiter might ask based on the job description.
+Hey, act like an experienced ATS (Applicant Tracking System) with a deep understanding of various industries such as tech, finance, and healthcare. Your task is to evaluate the provided resume in alignment with the given job description for the desired position. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing keywords with high accuracy. Additionally, anticipate potential questions that a recruiter might ask based on the job description.
 
 Please provide the response in the following format:
-{
-    "JD Match": "Percentage",
-    "Missing Keywords": ["Keyword1", "Keyword2", ...],
-    "Profile Summary": "Suggestions for profile summary enhancements",
-    "Potential Interview Questions": ["Question 1", "Question 2", ...],
-    "Past Projects": ["Project 1", "Project 2", ...],
-    "Desired Position Match": "Percentage"
-}
-"""
 
+JD Match: Percentage
+Missing Keywords: 
+- Keyword1
+- Keyword2
+Profile Summary Suggestions: 
+- Suggestions for profile summary enhancements
+Potential Interview Questions: 
+1. Question 1
+   - Answer 1
+2. Question 2
+   - Answer 2
+3. Question 3
+   - Answer 3
+4. Question 4
+   - Answer 4
+5. Question 5
+   - Answer 5
+Projects from Resume: 
+1. Project mentioned in the resume
+2. Another project mentioned in the resume
+Experience: 
+- Years of experience if mentioned in the resume
+- No previous experience if not mentioned
+Desired Job Match: Percentage
+"""
 
 ## streamlit app
 st.title("Smart ATS")
