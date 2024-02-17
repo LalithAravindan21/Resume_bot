@@ -48,10 +48,10 @@ Potential Interview Questions:
 5. {{Random question 5}}
    - Answer 5
 
-Projects from Resume: 
+Projects Required For This Job Description: 
 1. Project mentioned in the resume
 2. Another project mentioned in the resume
-Experience: 
+Experience Required according to the Job Description: 
 - Years of experience if mentioned in the resume
 - No previous experience if not mentioned
 Desired Job Match: Percentage
