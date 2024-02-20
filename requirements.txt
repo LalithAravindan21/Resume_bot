@@ -2,12 +2,3 @@ google.generativeai
 streamlit
 python-dotenv
 PyPDF2  #convert pdf into text
-pdfminer3
-pyresparser
-streamlit
-pandas
-pafy
-plotly
-pymysql
-streamlit-tags
-Pillow
