@@ -2,4 +2,3 @@ google.generativeai
 streamlit
 python-dotenv
 PyPDF2  #convert pdf into text
-google.api_core.exceptions
