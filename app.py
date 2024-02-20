@@ -2,12 +2,9 @@ import streamlit as st
 import google.generativeai as genai 
 import os
 import PyPDF2 as Pdf 
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk import pos_tag, ne_chunk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import spacy
 
 from dotenv import load_dotenv
 
@@ -30,75 +27,12 @@ def input_pdf_text(uploaded_file):
         text += str(page.extract_text())
     return text
 
-# Function to extract keywords from text
-def extract_keywords(text):
-    # Tokenize the text
-    tokens = word_tokenize(text)
-    # Remove stop words
-    stop_words = set(stopwords.words('english'))
-    filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
-    # Part-of-speech tagging
-    tagged_tokens = pos_tag(filtered_tokens)
-    # Extract nouns and proper nouns as keywords
-    keywords = [word for word, pos in tagged_tokens if pos in ['NN', 'NNP']]
-    return keywords
-
 # Function to calculate cosine similarity between two texts
 def calculate_similarity(text1, text2):
     tfidf_vectorizer = TfidfVectorizer()
     tfidf_matrix = tfidf_vectorizer.fit_transform([text1, text2])
     similarity_score = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
     return similarity_score
-
-# Function to suggest skills or courses based on job role and resume
-def suggest_skills(job_role, resume_text):
-    # Dummy function - replace with actual recommendation logic
-    suggested_skills = []
-    if "Data Scientist" in job_role:
-        suggested_skills.extend(["Machine Learning", "Statistical Analysis", "Python Programming", "Data Visualization", "Big Data Technologies", "Deep Learning", "SQL"])
-    elif "Cybersecurity Analyst" in job_role:
-        suggested_skills.extend(["Network Security", "Security Operations", "Cyber Threat Intelligence", "Penetration Testing", "Vulnerability Assessment", "Security Compliance", "Incident Response"])
-    elif "Software Developer" in job_role:
-        suggested_skills.extend(["Programming Languages (e.g., Python, Java, JavaScript)", "Web Development (e.g., HTML, CSS, JavaScript)", "Version Control (e.g., Git)", "Database Management", "Agile Methodologies"])
-    elif "Digital Marketing Specialist" in job_role:
-        suggested_skills.extend(["SEO", "SEM", "Content Marketing", "Social Media Marketing", "Google Analytics", "Email Marketing", "Copywriting"])
-    elif "Cloud Engineer" in job_role:
-        suggested_skills.extend(["Cloud Platforms (e.g., AWS, Azure, Google Cloud)", "Infrastructure as Code (e.g., Terraform, CloudFormation)", "Containerization (e.g., Docker, Kubernetes)", "Networking Fundamentals", "Security Best Practices"])
-    elif "AI/ML Engineer" in job_role:
-        suggested_skills.extend(["Machine Learning Algorithms", "Deep Learning Frameworks (e.g., TensorFlow, PyTorch)", "Model Deployment", "Natural Language Processing (NLP)", "Computer Vision", "Data Engineering"])
-    elif "Financial Analyst" in job_role:
-        suggested_skills.extend(["Financial Modeling", "Financial Analysis", "Excel/VBA", "Budgeting and Forecasting", "Risk Management", "Financial Reporting", "Investment Analysis"])
-    elif "Healthcare Administrator" in job_role:
-        suggested_skills.extend(["Healthcare Regulations and Compliance", "Health Information Systems", "Healthcare Administration", "Electronic Health Records (EHR)", "Healthcare Finance", "Medical Terminology", "Quality Improvement"])
-    elif "UX/UI Designer" in job_role:
-        suggested_skills.extend(["User Experience (UX) Design", "User Interface (UI) Design", "Wireframing and Prototyping", "Usability Testing", "Graphic Design Tools (e.g., Adobe XD, Sketch)", "Interaction Design", "Responsive Design"])
-    elif "Project Manager" in job_role:
-        suggested_skills.extend(["Project Management Tools (e.g., Microsoft Project, Asana)", "Stakeholder Management", "Risk Management", "Agile/Scrum Methodologies", "Communication Skills"])
-    elif "Tech Support Specialist" in job_role:
-        suggested_skills.extend(["Technical Troubleshooting", "Customer Support", "IT Service Management", "Ticketing Systems", "Remote Desktop Support", "Hardware and Software Installation"])
-    elif "Customer Service Representative" in job_role:
-        suggested_skills.extend(["Customer Relationship Management (CRM)", "Effective Communication", "Problem-Solving Skills", "Empathy", "Conflict Resolution", "Time Management", "Active Listening"])
-    elif "Administrative Assistant" in job_role:
-        suggested_skills.extend(["Office Management", "Calendar Management", "Document Preparation", "Data Entry", "Meeting Coordination", "Organization Skills", "Time Management"])
-    elif "Sales Associate" in job_role:
-        suggested_skills.extend(["Sales Techniques", "Customer Relationship Management (CRM)", "Negotiation Skills", "Product Knowledge", "Prospecting and Lead Generation", "Closing Techniques", "Communication Skills"])
-    elif "Teacher" in job_role:
-        suggested_skills.extend(["Curriculum Development", "Classroom Management", "Lesson Planning", "Differentiated Instruction", "Student Assessment", "Technology Integration", "Communication Skills"])
-    elif "Nurse" in job_role:
-        suggested_skills.extend(["Patient Care", "Clinical Skills", "Medication Administration", "Documentation", "Critical Thinking", "Empathy", "Interpersonal Skills"])
-    elif "Graphic Designer" in job_role:
-        suggested_skills.extend(["Graphic Design Software (e.g., Adobe Photoshop, Illustrator, InDesign)", "Typography", "Visual Communication", "Branding", "Color Theory", "Print and Digital Design", "Creativity"])
-    elif "Accountant" in job_role:
-        suggested_skills.extend(["Accounting Software (e.g., QuickBooks, Xero)", "Financial Reporting", "Tax Preparation", "Audit Procedures", "Budgeting and Forecasting", "Analytical Skills", "Attention to Detail"])
-    elif "Human Resources Specialist" in job_role:
-        suggested_skills.extend(["Recruitment and Staffing", "Employee Relations", "Performance Management", "HRIS (Human Resources Information System)", "Training and Development", "Legal Compliance", "Conflict Resolution"])
-    elif "Research Assistant" in job_role:
-        suggested_skills.extend(["Research Methodologies", "Data Collection and Analysis", "Literature Review", "Quantitative and Qualitative Research", "Statistical Analysis", "Report Writing", "Critical Thinking"])
-    else:
-        # Default suggested skills for other job roles
-        suggested_skills.extend(["Communication Skills", "Problem-Solving Skills", "Time Management", "Adaptability", "Leadership Skills"])
-
-    return suggested_skills
 
 # Define job roles based on current demand
 current_demand_job_roles = ["Data Scientist", "Cybersecurity Analyst", "Software Developer", "Digital Marketing Specialist", "Cloud Engineer", "AI/ML Engineer", "Financial Analyst", "Healthcare Administrator", "UX/UI Designer", "Project Manager"]
@@ -164,8 +98,13 @@ if generate:
 
         if uploaded_file is not None:
             resume_text = input_pdf_text(uploaded_file)
-            resume_keywords = extract_keywords(resume_text)
-            job_description_keywords = extract_keywords(generated_description)
+            nlp = spacy.load("en_core_web_sm")
+            resume_doc = nlp(resume_text)
+            resume_keywords = [token.text for token in resume_doc if token.pos_ in ['NOUN', 'PROPN']]
+            
+            job_description_doc = nlp(generated_description)
+            job_description_keywords = [token.text for token in job_description_doc if token.pos_ in ['NOUN', 'PROPN']]
+            
             all_keywords = list(set(resume_keywords + job_description_keywords))  # Combine keywords from both resume and job description
             generated_questions = generate_questions(all_keywords)
 
