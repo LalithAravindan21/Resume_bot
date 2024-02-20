@@ -2,3 +2,5 @@ google.generativeai
 streamlit
 python-dotenv
 PyPDF2  #convert pdf into text
+nltk
+scikit-learn
