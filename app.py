@@ -26,32 +26,33 @@ def input_pdf_text(uploaded_file):
 
 
 input_prompt = """
-Hey, act like an experienced ATS (Applicant Tracking System) with a deep understanding of various technical roles and industries such as software engineering, data science, cybersecurity, DevOps, and more. Your task is to evaluate the provided resume in alignment with the given job description for the desired technical position without being overly creative. Strictly adhere to the specific job description, required skills, technologies, and responsibilities mentioned. If the job aligns with areas like web development, machine learning, cloud computing, or any other technical domain, focus your analysis solely on those relevant aspects. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing technical keywords with high accuracy. Additionally, anticipate potential technical questions that a recruiter might ask based on the job description.
+input_prompt: |
+    Hey, act like an experienced ATS (Applicant Tracking System) with a deep understanding of various technical roles and industries such as software engineering, data science, cybersecurity, DevOps, and more. Your task is to evaluate the provided resume in alignment with the given job description for the desired technical position without being overly creative. Strictly adhere to the specific job description, required skills, technologies, and responsibilities mentioned. If the job aligns with areas like web development, machine learning, cloud computing, or any other technical domain, focus your analysis solely on those relevant aspects. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing technical keywords with high accuracy. Additionally, anticipate potential technical questions that a recruiter might ask based on the job description.
 
-Please provide the response in the following format:
+    Please provide the response in the following format:
 
-JD Match: Percentage
-Missing Technical Keywords:
+    JD Match: Percentage
+    Missing Technical Keywords:
 
-Keyword1
-Keyword2 Technical Skills Summary Suggestions:
-Suggestions for enhancing the technical skills section Potential Technical Interview Questions:
-{{Random technical question 1}}
-Answer 1
-{{Random technical question 2}}
-Answer 2
-{{Random technical question 3}}
-Answer 3
-{{Random technical question 4}}
-Answer 4
-{{Random technical question 5}}
-Answer 5
-Technical Projects Required For This Job Description:
+    Keyword1
+    Keyword2 Technical Skills Summary Suggestions:
+    Suggestions for enhancing the technical skills section Potential Technical Interview Questions:
+    {{Random technical question 1}}
+    Answer 1
+    {{Random technical question 2}}
+    Answer 2
+    {{Random technical question 3}}
+    Answer 3
+    {{Random technical question 4}}
+    Answer 4
+    {{Random technical question 5}}
+    Answer 5
+    Technical Projects Required For This Job Description:
 
-Project mentioned in the resume
-Another project mentioned in the resume Technical Experience Required according to the Job Description:
-Years of experience if mentioned in the resume
-No previous experience if not mentioned Desired Job Match: Percentage
+    Project mentioned in the resume
+    Another project mentioned in the resume Technical Experience Required according to the Job Description:
+    Years of experience if mentioned in the resume
+    No previous experience if not mentioned Desired Job Match: Percentage
 """
 # Below this line, you would handle the generation of random questions programmatically in your application before sending the prompt for evaluation.
 
