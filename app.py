@@ -33,6 +33,7 @@ def get_gemini_response(jd, resume_text):
     - Desired job match percentage.
     """
     response = model.generate_content(input_prompt)
+    print("Model Response:", response)  # Debugging line to check model output
     return response.text
 
 def input_pdf_text(uploaded_file):
@@ -95,6 +96,6 @@ if submit:
             st.write("Desired Job Match:", parsed_response.get("Desired_Job_Match", "No match percentage provided"))
 
         except json.JSONDecodeError:
-            st.error("Error in processing the response. Please check the model output format.")
+            st.error("Failed to decode JSON from model response. Please check the model output format.")
     else:
         st.error("Please make sure to upload a PDF resume and enter the job description before submitting.")
