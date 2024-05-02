@@ -33,7 +33,7 @@ st.title("Smart ATS - Enhance Your Resume")
 jd = st.text_area("Paste the Job Description")
 uploaded_file = st.file_uploader("Upload Your Resume", type="pdf")
 
-submit = st.button("Submit")
+submit = st.button("Analyze")
 
 if submit:
     if uploaded_file and jd:
@@ -43,35 +43,41 @@ if submit:
         try:
             parsed_response = json.loads(response)
             
-            st.subheader("Job Description Match")
-            st.write("JD Match Percentage:", parsed_response.get("JD_Match_Percentage", "No data available"))
+            st.subheader("Resume Analysis Results")
+            st.markdown("""
+            **Job Description Match**
+            - **Match Percentage**: *{match_percent}*
+            """.format(match_percent=parsed_response.get("JD_Match_Percentage", "No data available")))
 
-            st.subheader("Technical Skills Summary Suggestions")
-            st.write(parsed_response.get("Technical_Skills_Summary_Suggestions", "No suggestions available"))
+            st.markdown("**Technical Skills Summary**")
+            st.text(parsed_response.get("Technical_Skills_Summary_Suggestions", "No suggestions available"))
 
-            st.subheader("Potential Technical Interview Questions")
-            for question in parsed_response.get("Potential_Technical_Interview_Questions", []):
-                st.write("**Question:**", question["Question"])
-                st.write("**Hints to use:**", ', '.join(question["Hints"]))
+            st.markdown("**Potential Technical Interview Questions**")
+            questions = parsed_response.get("Potential_Technical_Interview_Questions", [])
+            for question in questions:
+                st.markdown("""
+                - **Question:** {question_text}
+                - **Hints:** {hints}
+                """.format(question_text=question["Question"], hints=', '.join(question["Hints"])))
 
-            st.subheader("Technical Projects Required For This Job Description")
+            st.markdown("**Required Projects**")
             projects_required = parsed_response.get("Technical_Projects_Required", [])
             if projects_required:
                 for project in projects_required:
-                    st.write(project)
+                    st.text(project)
             else:
-                st.write("No specific projects required.")
+                st.text("No specific projects required.")
 
-            st.subheader("Technical Experience Required")
-            st.write(parsed_response.get("Technical_Experience_Required", "No specific experience details available"))
+            st.markdown("**Required Experience**")
+            st.text(parsed_response.get("Technical_Experience_Required", "No specific experience details available"))
 
-            st.subheader("Suggested Project Topics to Work On")
+            st.markdown("**Suggested Project Topics**")
             suggested_projects = parsed_response.get("Suggested_Project_Topics", [])
             if suggested_projects:
                 for project in suggested_projects:
-                    st.write(project)
+                    st.text(project)
             else:
-                st.write("No suggested project topics available.")
+                st.text("No suggested project topics available.")
 
         except json.JSONDecodeError:
             st.error("Failed to decode JSON from model response. Please check the model output format.")
