@@ -11,28 +11,13 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 def get_gemini_response(jd, resume_text):
     model = genai.GenerativeModel('gemini-pro')
     input_prompt = f"""
-    Hey, act like an experienced ATS with a deep understanding of various technical roles and industries. Evaluate the provided resume in alignment with the job description for the desired technical position. Focus your analysis on the specific job description, required skills, technologies, and responsibilities mentioned. 
+    Please analyze the provided resume and the job description, and return a JSON structured response with details including match percentage, skills summary, interview questions with hints, required projects, experience needed, and suggested project topics.
     
     ---Job Description---
     {jd}
-
+    
     ---Resume Text---
     {resume_text}
-
-    Please provide the response in the following JSON format:
-    {{
-        "JD_Match_Percentage": "Percentage",
-        "Technical_Skills_Summary_Suggestions": "Suggestions for enhancing the technical skills section",
-        "Potential_Technical_Interview_Questions": [
-            {{
-                "Question": "Question",
-                "Keywords": ["Keyword1", "Keyword2"]
-            }}
-        ],
-        "Technical_Projects_Required": ["Project1", "Project2"],
-        "Technical_Experience_Required": "Details on required experience",
-        "Suggested_Project_Topics": ["Topic1", "Topic2"]
-    }}
     """
     response = model.generate_content(input_prompt)
     return response.text
@@ -67,7 +52,7 @@ if submit:
             st.subheader("Potential Technical Interview Questions")
             for question in parsed_response.get("Potential_Technical_Interview_Questions", []):
                 st.write("**Question:**", question["Question"])
-                st.write("**Keywords to use:**", ', '.join(question["Keywords"]))
+                st.write("**Hints to use:**", ', '.join(question["Hints"]))
 
             st.subheader("Technical Projects Required For This Job Description")
             projects_required = parsed_response.get("Technical_Projects_Required", [])
