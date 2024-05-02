@@ -1,114 +1,100 @@
 import streamlit as st
 import google.generativeai as genai 
 import os
-import PyPDF2 as Pdf 
+import PyPDF2 as pdf
 import json
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
+# Configure the Google API for the generative model
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-#GEMINI PRO RESPONSE
-def get_gemini_response(input):
-    model=genai.GenerativeModel('gemini-pro')
-    response=model.generate_content(input)
+def get_gemini_response(jd, resume_text):
+    model = genai.GenerativeModel('gemini-pro')
+    input_prompt = f"""
+    As an advanced ATS, your role is to analyze a resume provided below and assess it against a detailed job description for a technical position. Focus on the job's specific requirements including skills, technologies, responsibilities, and industry relevance. Generate a response in JSON format that provides a comprehensive evaluation aligned with the job description provided.
+
+    ---Job Description---
+    {jd}
+
+    ---Resume Text---
+    {resume_text}
+
+    Your output should include:
+    - A match percentage with the job description.
+    - Missing technical keywords not found in the resume.
+    - Suggestions for improving the technical skills section.
+    - Potential technical interview questions with key terms for hints.
+    - A list of projects mentioned in the resume.
+    - Suggested new project topics relevant to the job.
+    - Detailed technical experience requirements including necessary years of experience.
+    - Desired job match percentage.
+    """
+    response = model.generate_content(input_prompt)
     return response.text
 
-#to extract the text from pdf
 def input_pdf_text(uploaded_file):
-    reader=Pdf.PdfReader(uploaded_file)
-    text=""
+    reader = pdf.PdfReader(uploaded_file)
+    text = ""
     for page in range(len(reader.pages)):
-        page=reader.pages[page]
-        text+=str(page.extract_text())
+        page = reader.pages[page]
+        text += str(page.extract_text())
     return text
 
-input_prompt = """
-input_prompt: |
-    Hey, act like an experienced ATS (Applicant Tracking System) with a deep understanding of various technical roles and industries such as software engineering, data science, cybersecurity, DevOps, and more. Your task is to evaluate the provided resume in alignment with the given job description for the desired technical position without being overly creative. Strictly adhere to the specific job description, required skills, technologies, and responsibilities mentioned. If the job aligns with areas like web development, machine learning, cloud computing, or any other technical domain, focus your analysis solely on those relevant aspects. Considering the competitiveness of the job market, provide the best assistance for improving the resume by assigning a percentage match based on the job description and identifying missing technical keywords with high accuracy. Additionally, anticipate potential technical questions that a recruiter might ask based on the job description.
-
-    Please provide the response in the following format:
-
-    {
-        "JD_Match": "Percentage",
-        "Missing_Technical_Keywords": [
-            "Keyword1",
-            "Keyword2"
-        ],
-        "Technical_Skills_Summary_Suggestions": "Suggestions for enhancing the technical skills section",
-        "Potential_Technical_Interview_Questions": [
-            {
-                "Question": "Random technical question 1",
-                "Answer": "Answer 1"
-            },
-            {
-                "Question": "Random technical question 2",
-                "Answer": "Answer 2"
-            },
-            {
-                "Question": "Random technical question 3",
-                "Answer": "Answer 3"
-            },
-            {
-                "Question": "Random technical question 4",
-                "Answer": "Answer 4"
-            },
-            {
-                "Question": "Random technical question 5",
-                "Answer": "Answer 5"
-            }
-        ],
-        "Technical_Projects_Required": [
-            "Project mentioned in the resume",
-            "Another project mentioned in the resume"
-        ],
-        "Technical_Experience_Required": {
-            "Years_of_Experience": "Years of experience if mentioned in the resume",
-            "No_Previous_Experience": "No previous experience if not mentioned"
-        },
-        "Desired_Job_Match": "Percentage"
-    }
-"""
-
-## streamlit app
+# Streamlit user interface
 st.title("Smart ATS")
-st.text("Improve Your Resume ATS")
-jd=st.text_area("Paste the Job Description")
-uploaded_file=st.file_uploader("Upload Your Resume",type="pdf",help="Please uplaod the pdf")
+st.text("Improve Your Resume with ATS")
+jd = st.text_area("Paste the Job Description")
+uploaded_file = st.file_uploader("Upload Your Resume", type="pdf", help="Please upload the pdf file.")
 
 submit = st.button("Submit")
 
 if submit:
-    if uploaded_file is not None:
-        text=input_pdf_text(uploaded_file)
-        response=get_gemini_response(input_prompt)
-        
-        # Parsing JSON response
-        parsed_response = json.loads(response)
-        
-        st.subheader("Job Description Match")
-        st.write("JD Match:", parsed_response["JD_Match"])
+    if uploaded_file is not None and jd:
+        text = input_pdf_text(uploaded_file)
+        response = get_gemini_response(jd, text)
 
-        st.subheader("Missing Technical Keywords")
-        for keyword in parsed_response["Missing_Technical_Keywords"]:
-            st.write(keyword)
+        try:
+            parsed_response = json.loads(response)
 
-        st.subheader("Technical Skills Summary Suggestions")
-        st.write(parsed_response["Technical_Skills_Summary_Suggestions"])
+            st.subheader("Job Description Match")
+            st.write("JD Match:", parsed_response.get("JD_Match", "No data"))
 
-        st.subheader("Potential Technical Interview Questions")
-        for question in parsed_response["Potential_Technical_Interview_Questions"]:
-            st.write("**Question:**", question["Question"])
-            st.write("**Answer:**", question["Answer"])
+            st.subheader("Missing Technical Keywords")
+            missing_keywords = parsed_response.get("Missing_Technical_Keywords", [])
+            if missing_keywords:
+                for keyword in missing_keywords:
+                    st.write(keyword)
+            else:
+                st.write("No missing keywords identified.")
 
-        st.subheader("Technical Projects Required For This Job Description")
-        for project in parsed_response["Technical_Projects_Required"]:
-            st.write(project)
+            st.subheader("Technical Skills Summary Suggestions")
+            st.write(parsed_response.get("Technical_Skills_Summary_Suggestions", "No suggestions provided."))
 
-        st.subheader("Technical Experience Required")
-        st.write("Years of Experience:", parsed_response["Technical_Experience_Required"]["Years_of_Experience"])
-        st.write("No Previous Experience:", parsed_response["Technical_Experience_Required"]["No_Previous_Experience"])
+            st.subheader("Potential Technical Interview Questions")
+            for question in parsed_response.get("Potential_Technical_Interview_Questions", []):
+                st.write("**Question:**", question.get("Question", "No question provided"))
+                st.write("**Keywords for Answer:**", ', '.join(question.get("Hint", [])))
 
-        st.subheader("Desired Job Match")
-        st.write("Desired Job Match:", parsed_response["Desired_Job_Match"])
+            st.subheader("Technical Projects Required For This Job Description")
+            for project in parsed_response.get("Technical_Projects_Required", []):
+                st.write(project)
+
+            st.subheader("Suggested Project Topics")
+            for topic in parsed_response.get("Suggested_Project_Topics", []):
+                st.write(topic)
+
+            st.subheader("Technical Experience Required")
+            experience = parsed_response.get("Technical_Experience_Required", {})
+            st.write("Years of Experience:", experience.get("Years_of_Experience", "Not specified"))
+            st.write("No Previous Experience:", experience.get("No_Previous_Experience", "Not specified"))
+
+            st.subheader("Desired Job Match")
+            st.write("Desired Job Match:", parsed_response.get("Desired_Job_Match", "No match percentage provided"))
+
+        except json.JSONDecodeError:
+            st.error("Error in processing the response. Please check the model output format.")
+    else:
+        st.error("Please make sure to upload a PDF resume and enter the job description before submitting.")
