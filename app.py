@@ -10,21 +10,84 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 def get_gemini_response(jd, resume_text):
     model = genai.GenerativeModel('gemini-pro')
     input_prompt = f"""
-    Analyze the provided resume and the job description. Provide a detailed report with:
-    1. Job Description and Resume Match Percentage.
-    2. Missing Keywords and Skills.
-    3. Technical Skills Summary Suggestions.
-    4. Potential Technical Interview Questions with suggested keywords to use in answers.
-    5. Projects Required for the Job Description.
-    6. Experience Required for the Job Description.
-    7. Suggested Project Topics to Work On, including any revisions or expansions on projects mentioned in the resume.
-    8. Profile Summary Suggestions.
-
-    ---Job Description---
     {jd}
     
-    ---Resume Text---
+    Resume:
     {resume_text}
+    
+    Act as an experienced ATS (Applicant Tracking System) with a deep understanding of various technical roles and industries such as software engineering, data science, cybersecurity, DevOps, and more. Evaluate the provided resume in alignment with the given job description for the desired technical position. Strictly adhere to the specific job description, required skills, technologies, and responsibilities mentioned. If the job aligns with technical domains like web development, machine learning, cloud computing, or others, focus your analysis specifically on those areas. Considering the competitiveness of the job market, help improve the resume by:
+    - Assigning a percentage match based on the job description.
+    - Identifying missing technical keywords with high accuracy.
+    - Anticipating potential technical interview questions with suggested keywords to use in answers, instead of providing full answers.
+    - Suggesting project topics to work on based on gaps or needed expansions from the projects listed in the resume.
+
+    Additionally, for roles in the arts, science, and commerce fields:
+    - Assign a percentage match based on the job description.
+    - Identify missing academic keywords with high accuracy.
+    - Anticipate potential interview questions with suggested keywords to use in answers, instead of providing full answers.
+    - Suggest research or project topics to work on based on gaps or needed expansions from the projects listed in the resume.
+
+    Please format your response as follows:
+    {{
+        "JD_Match": "Percentage",
+        "Missing_Technical_Keywords": [
+            "Keyword1",
+            "Keyword2"
+        ],
+        "Missing_Academic_Keywords": [
+            "Keyword1",
+            "Keyword2"
+        ],
+        "Technical_Skills_Summary_Suggestions": "Suggestions for enhancing the technical skills section",
+        "Skills_Summary_Suggestions": "Suggestions for enhancing the skills section",
+        "Potential_Technical_Interview_Questions": [
+            {{
+                "Question": "Technical question 1",
+                "Keywords": ["Keyword1", "Keyword2"]
+            }},
+            {{
+                "Question": "Technical question 2",
+                "Keywords": ["Keyword3", "Keyword4"]
+            }}
+            // more questions as required
+        ],
+        "Potential_Interview_Questions": [
+            {{
+                "Question": "Interview question 1",
+                "Keywords": ["Keyword1", "Keyword2"]
+            }},
+            {{
+                "Question": "Interview question 2",
+                "Keywords": ["Keyword3", "Keyword4"]
+            }}
+            // more questions as required
+        ],
+        "Technical_Projects_Required": [
+            "Project mentioned in the resume",
+            "Another project mentioned in the resume"
+        ],
+        "Projects_Required": [
+            "Project mentioned in the resume",
+            "Another project mentioned in the resume"
+        ],
+        "Suggested_Project_Topics": [
+            "Topic 1 based on existing projects to expand",
+            "New Topic 2 related to job requirements"
+        ],
+        "Suggested_Research_Topics": [
+            "Topic 1 based on existing projects to expand",
+            "New Topic 2 related to job requirements"
+        ],
+        "Technical_Experience_Required": {{
+            "Years_of_Experience": "Years of experience if mentioned in the resume",
+            "No_Previous_Experience": "No previous experience if not mentioned"
+        }},
+        "Experience_Required": {{
+            "Years_of_Experience": "Years of experience if mentioned in the resume",
+            "No_Previous_Experience": "No previous experience if not mentioned"
+        }},
+        "Desired_Job_Match": "Percentage"
+    }}
     """
     response = model.generate_content(input_prompt)
     return response.text
