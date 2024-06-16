@@ -20,12 +20,16 @@ def get_gemini_response(jd, resume_text):
     - Identifying missing technical keywords with high accuracy.
     - Anticipating potential technical interview questions with suggested keywords to use in answers, instead of providing full answers.
     - Suggesting project topics to work on based on gaps or needed expansions from the projects listed in the resume.
+    - Highlighting specific experiences or accomplishments to emphasize in the resume.
+    - Generating practice questions related to the projects listed in the resume to help the candidate prepare for potential project-related questions during interviews.
 
     Additionally, for roles in the arts, science, and commerce fields:
     - Assign a percentage match based on the job description.
     - Identify missing academic keywords with high accuracy.
     - Anticipate potential interview questions with suggested keywords to use in answers, instead of providing full answers.
     - Suggest research or project topics to work on based on gaps or needed expansions from the projects listed in the resume.
+    - Highlight specific experiences or accomplishments to emphasize in the resume.
+    - Generating practice questions related to the projects listed in the resume to help the candidate prepare for potential project-related questions during interviews.
 
     Please format your response as follows:
     {{
@@ -86,7 +90,26 @@ def get_gemini_response(jd, resume_text):
             "Years_of_Experience": "Years of experience if mentioned in the resume",
             "No_Previous_Experience": "No previous experience if not mentioned"
         }},
-        "Desired_Job_Match": "Percentage"
+        "Desired_Job_Match": "Percentage",
+        "Highlighted_Experiences_Accomplishments": [
+            "Experience 1 to emphasize",
+            "Accomplishment 2 to emphasize"
+        ],
+        "Project_Practice_Questions": {{
+            "Project_Name_1": [
+                "Practice question 1 for Project_Name_1",
+                "Practice question 2 for Project_Name_1",
+                "Practice question 3 for Project_Name_1",
+                "Practice question 4 for Project_Name_1"
+            ],
+            "Project_Name_2": [
+                "Practice question 1 for Project_Name_2",
+                "Practice question 2 for Project_Name_2",
+                "Practice question 3 for Project_Name_2",
+                "Practice question 4 for Project_Name_2"
+            ]
+            // more projects and questions as required
+        }}
     }}
     """
     response = model.generate_content(input_prompt)
