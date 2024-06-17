@@ -53,7 +53,7 @@ def get_gemini_response(jd, resume_text):
                 "Question": "Technical question 2",
                 "Keywords": ["Keyword3", "Keyword4"]
             }}
-            // more questions as required
+            // at least 5 questions as required
         ],
         "Potential_Interview_Questions": [
             {{
@@ -64,7 +64,7 @@ def get_gemini_response(jd, resume_text):
                 "Question": "Interview question 2",
                 "Keywords": ["Keyword3", "Keyword4"]
             }}
-            // more questions as required
+            // at least 5 questions as required
         ],
         "Technical_Projects_Required": [
             "Project mentioned in the resume",
@@ -100,18 +100,21 @@ def get_gemini_response(jd, resume_text):
                 "Practice question 1 for Project_Name_1",
                 "Practice question 2 for Project_Name_1",
                 "Practice question 3 for Project_Name_1",
-                "Practice question 4 for Project_Name_1"
+                "Practice question 4 for Project_Name_1",
+                "Practice question 5 for Project_Name_1"
             ],
             "Project_Name_2": [
                 "Practice question 1 for Project_Name_2",
                 "Practice question 2 for Project_Name_2",
                 "Practice question 3 for Project_Name_2",
-                "Practice question 4 for Project_Name_2"
+                "Practice question 4 for Project_Name_2",
+                "Practice question 5 for Project_Name_2"
             ]
             // more projects and questions as required
         }}
     }}
     """
+
     response = model.generate_content(input_prompt)
     return response.text
 
