@@ -3,6 +3,7 @@ import google.generativeai as genai
 import os
 import PyPDF2 as pdf
 from dotenv import load_dotenv
+import json
 
 # Load environment variables
 load_dotenv()
@@ -133,11 +134,10 @@ def get_gemini_response(jd, resume_text):
                 "Practice question 4 for Project_Name_2, discussing challenges faced and solutions implemented",
                 "Practice question 5 for Project_Name_2, considering future improvements or extensions"
             ]
-            // more projects and questions as required
         }}
     }}
     """
-
+    
     response = model.generate_content(input_prompt)
     return response.text
 
@@ -160,23 +160,55 @@ if submit:
     if uploaded_file and jd:
         resume_text = input_pdf_text(uploaded_file)
         analysis = get_gemini_response(jd, resume_text)
-
-        st.markdown("### Detailed Analysis Report")
         
-        # Let's assume the output is well formatted in the given order and consistently uses similar headings.
-        analysis_parts = analysis.split('\n')
-        match_percentage = next((line for line in analysis_parts if "Match Percentage" in line), "Match Percentage not available.")
-        resume_summary = next((line for line in analysis_parts if "Profile Summary Suggestions" in line), "Profile summary not available.")
-
-        st.markdown("#### Job Description and Resume Match Percentage")
-        st.markdown(match_percentage)
-
-        st.markdown("#### Resume Summary")
-        st.markdown(resume_summary)
-
-        # Display other parts
-        for part in analysis_parts:
-            if part.strip() and part not in [match_percentage, resume_summary]:  # Avoid repeating parts
-                st.markdown(part)
+        try:
+            analysis_json = json.loads(analysis)
+            st.markdown("### Detailed Analysis Report")
+            
+            st.markdown(f"#### Job Description and Resume Match Percentage")
+            st.markdown(f"**{analysis_json.get('JD_Match', 'Match Percentage not available.')}**")
+            
+            st.markdown("#### Missing Technical Keywords")
+            st.markdown(", ".join(analysis_json.get('Missing_Technical_Keywords', ['No missing technical keywords.'])))
+            
+            st.markdown("#### Missing Academic Keywords")
+            st.markdown(", ".join(analysis_json.get('Missing_Academic_Keywords', ['No missing academic keywords.'])))
+            
+            st.markdown("#### Technical Skills Summary Suggestions")
+            st.markdown(analysis_json.get('Technical_Skills_Summary_Suggestions', 'No suggestions available.'))
+            
+            st.markdown("#### Skills Summary Suggestions")
+            st.markdown(analysis_json.get('Skills_Summary_Suggestions', 'No suggestions available.'))
+            
+            st.markdown("#### Potential Technical Interview Questions")
+            for question in analysis_json.get('Potential_Technical_Interview_Questions', []):
+                st.markdown(f"- **{question['Question']}** (Keywords: {', '.join(question['Keywords'])})")
+            
+            st.markdown("#### Potential Interview Questions")
+            for question in analysis_json.get('Potential_Interview_Questions', []):
+                st.markdown(f"- **{question['Question']}** (Keywords: {', '.join(question['Keywords'])})")
+            
+            st.markdown("#### Technical Projects Required")
+            st.markdown(", ".join(analysis_json.get('Technical_Projects_Required', ['No technical projects required.'])))
+            
+            st.markdown("#### Projects Required")
+            st.markdown(", ".join(analysis_json.get('Projects_Required', ['No projects required.'])))
+            
+            st.markdown("#### Suggested Project Topics")
+            st.markdown(", ".join(analysis_json.get('Suggested_Project_Topics', ['No suggested project topics.'])))
+            
+            st.markdown("#### Suggested Research Topics")
+            st.markdown(", ".join(analysis_json.get('Suggested_Research_Topics', ['No suggested research topics.'])))
+            
+            st.markdown("#### Highlighted Experiences and Accomplishments")
+            st.markdown(", ".join(analysis_json.get('Highlighted_Experiences_Accomplishments', ['No highlighted experiences or accomplishments.'])))
+            
+            st.markdown("#### Practice Questions for Projects")
+            for project, questions in analysis_json.get('Project_Practice_Questions', {}).items():
+                st.markdown(f"**{project}:**")
+                for question in questions:
+                    st.markdown(f"- {question}")
+        except json.JSONDecodeError:
+            st.error("Failed to decode the response from Google Gemini. Please try again.")
     else:
         st.error("Please make sure to upload a PDF resume and enter the job description before submitting.")
