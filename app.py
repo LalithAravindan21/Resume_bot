@@ -9,109 +9,109 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 def get_gemini_response(jd, resume_text):
     model = genai.GenerativeModel('gemini-pro')
-   input_prompt = f"""
-    {jd}
-    
-    Resume:
-    {resume_text}
-    
-    Act as an experienced ATS (Applicant Tracking System) with a deep understanding of various technical roles and industries such as software engineering, data science, cybersecurity, DevOps, and more. Evaluate the provided resume in alignment with the given job description for the desired technical position. Strictly adhere to the specific job description, required skills, technologies, and responsibilities mentioned. If the job aligns with technical domains like web development, machine learning, cloud computing, or others, focus your analysis specifically on those areas. Considering the competitiveness of the job market, help improve the resume by:
-    - Assigning a percentage match based on the job description.
-    - Identifying missing technical keywords with high accuracy.
-    - Anticipating potential technical interview questions with suggested keywords to use in answers, instead of providing full answers.
-    - Suggesting project topics to work on based on gaps or needed expansions from the projects listed in the resume.
-    - Highlighting specific experiences or accomplishments to emphasize in the resume.
-    - Generating practice questions related to the projects listed in the resume to help the candidate prepare for potential project-related questions during interviews.
-
-    Additionally, for roles in the arts, science, and commerce fields:
-    - Assign a percentage match based on the job description.
-    - Identify missing academic keywords with high accuracy.
-    - Anticipate potential interview questions with suggested keywords to use in answers, instead of providing full answers.
-    - Suggest research or project topics to work on based on gaps or needed expansions from the projects listed in the resume.
-    - Highlight specific experiences or accomplishments to emphasize in the resume.
-    - Generating practice questions related to the projects listed in the resume to help the candidate prepare for potential project-related questions during interviews.
-
-    Please format your response as follows:
-    {{
-        "JD_Match": "Percentage",
-        "Missing_Technical_Keywords": [
-            "Keyword1",
-            "Keyword2"
+   {
+    "JD_Match": "Percentage",
+    "Missing_Technical_Keywords": [
+        "Keyword1",
+        "Keyword2"
+    ],
+    "Missing_Academic_Keywords": [
+        "Keyword1",
+        "Keyword2"
+    ],
+    "Technical_Skills_Summary_Suggestions": "Suggestions for enhancing the technical skills section, focusing on the required skills and technologies mentioned in the JD, and highlighting any advanced or niche skills.",
+    "Skills_Summary_Suggestions": "Suggestions for enhancing the skills section, ensuring all necessary skills from the JD are covered and highlighting any relevant certifications or unique skills.",
+    "Potential_Technical_Interview_Questions": [
+        {
+            "Question": "Technical question 1",
+            "Keywords": ["Keyword1", "Keyword2"]
+        },
+        {
+            "Question": "Technical question 2",
+            "Keywords": ["Keyword3", "Keyword4"]
+        },
+        {
+            "Question": "Technical question 3",
+            "Keywords": ["Keyword5", "Keyword6"]
+        },
+        {
+            "Question": "Technical question 4",
+            "Keywords": ["Keyword7", "Keyword8"]
+        },
+        {
+            "Question": "Technical question 5",
+            "Keywords": ["Keyword9", "Keyword10"]
+        }
+    ],
+    "Potential_Interview_Questions": [
+        {
+            "Question": "Interview question 1",
+            "Keywords": ["Keyword1", "Keyword2"]
+        },
+        {
+            "Question": "Interview question 2",
+            "Keywords": ["Keyword3", "Keyword4"]
+        },
+        {
+            "Question": "Interview question 3",
+            "Keywords": ["Keyword5", "Keyword6"]
+        },
+        {
+            "Question": "Interview question 4",
+            "Keywords": ["Keyword7", "Keyword8"]
+        },
+        {
+            "Question": "Interview question 5",
+            "Keywords": ["Keyword9", "Keyword10"]
+        }
+    ],
+    "Technical_Projects_Required": [
+        "Project mentioned in the resume",
+        "Another project mentioned in the resume"
+    ],
+    "Projects_Required": [
+        "Project mentioned in the resume",
+        "Another project mentioned in the resume"
+    ],
+    "Suggested_Project_Topics": [
+        "Topic 1 based on existing projects to expand, focusing on technologies or methodologies mentioned in the JD",
+        "New Topic 2 related to job requirements, ensuring alignment with the latest industry trends and practices"
+    ],
+    "Suggested_Research_Topics": [
+        "Topic 1 based on existing projects to expand, ensuring relevance to current scientific or academic advancements",
+        "New Topic 2 related to job requirements, emphasizing innovative or underexplored areas"
+    ],
+    "Technical_Experience_Required": {
+        "Years_of_Experience": "Years of experience if mentioned in the resume",
+        "No_Previous_Experience": "No previous experience if not mentioned"
+    },
+    "Experience_Required": {
+        "Years_of_Experience": "Years of experience if mentioned in the resume",
+        "No_Previous_Experience": "No previous experience if not mentioned"
+    },
+    "Desired_Job_Match": "Percentage",
+    "Highlighted_Experiences_Accomplishments": [
+        "Experience 1 to emphasize, particularly those aligning with job responsibilities and demonstrating impact or success",
+        "Accomplishment 2 to emphasize, focusing on quantifiable achievements and recognitions"
+    ],
+    "Project_Practice_Questions": {
+        "Project_Name_1": [
+            "Practice question 1 for Project_Name_1, aiming to assess understanding of key technologies and methodologies used",
+            "Practice question 2 for Project_Name_1, focusing on problem-solving and project outcomes",
+            "Practice question 3 for Project_Name_1, exploring challenges faced and how they were overcome",
+            "Practice question 4 for Project_Name_1, inquiring about teamwork and collaboration aspects",
+            "Practice question 5 for Project_Name_1, covering future improvements or extensions"
         ],
-        "Missing_Academic_Keywords": [
-            "Keyword1",
-            "Keyword2"
-        ],
-        "Technical_Skills_Summary_Suggestions": "Suggestions for enhancing the technical skills section",
-        "Skills_Summary_Suggestions": "Suggestions for enhancing the skills section",
-        "Potential_Technical_Interview_Questions": [
-            {{
-                "Question": "Technical question 1",
-                "Keywords": ["Keyword1", "Keyword2"]
-            }},
-            {{
-                "Question": "Technical question 2",
-                "Keywords": ["Keyword3", "Keyword4"]
-            }}
-            // more questions as required
-        ],
-        "Potential_Interview_Questions": [
-            {{
-                "Question": "Interview question 1",
-                "Keywords": ["Keyword1", "Keyword2"]
-            }},
-            {{
-                "Question": "Interview question 2",
-                "Keywords": ["Keyword3", "Keyword4"]
-            }}
-            // more questions as required
-        ],
-        "Technical_Projects_Required": [
-            "Project mentioned in the resume",
-            "Another project mentioned in the resume"
-        ],
-        "Projects_Required": [
-            "Project mentioned in the resume",
-            "Another project mentioned in the resume"
-        ],
-        "Suggested_Project_Topics": [
-            "Topic 1 based on existing projects to expand",
-            "New Topic 2 related to job requirements"
-        ],
-        "Suggested_Research_Topics": [
-            "Topic 1 based on existing projects to expand",
-            "New Topic 2 related to job requirements"
-        ],
-        "Technical_Experience_Required": {{
-            "Years_of_Experience": "Years of experience if mentioned in the resume",
-            "No_Previous_Experience": "No previous experience if not mentioned"
-        }},
-        "Experience_Required": {{
-            "Years_of_Experience": "Years of experience if mentioned in the resume",
-            "No_Previous_Experience": "No previous experience if not mentioned"
-        }},
-        "Desired_Job_Match": "Percentage",
-        "Highlighted_Experiences_Accomplishments": [
-            "Experience 1 to emphasize",
-            "Accomplishment 2 to emphasize"
-        ],
-        "Project_Practice_Questions": {{
-            "Project_Name_1": [
-                "Practice question 1 for Project_Name_1",
-                "Practice question 2 for Project_Name_1",
-                "Practice question 3 for Project_Name_1",
-                "Practice question 4 for Project_Name_1"
-            ],
-            "Project_Name_2": [
-                "Practice question 1 for Project_Name_2",
-                "Practice question 2 for Project_Name_2",
-                "Practice question 3 for Project_Name_2",
-                "Practice question 4 for Project_Name_2"
-            ]
-            // more projects and questions as required
-        }}
-    }}
-    """
+        "Project_Name_2": [
+            "Practice question 1 for Project_Name_2, targeting core technical skills and their application",
+            "Practice question 2 for Project_Name_2, emphasizing innovation and creativity in the project",
+            "Practice question 3 for Project_Name_2, covering data analysis and decision-making processes",
+            "Practice question 4 for Project_Name_2, discussing challenges faced and solutions implemented",
+            "Practice question 5 for Project_Name_2, considering future improvements or extensions"
+        ]
+        // more projects and questions as required
+    }
+}
 
 
     response = model.generate_content(input_prompt)
