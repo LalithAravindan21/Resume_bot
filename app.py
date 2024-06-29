@@ -17,32 +17,19 @@ def get_gemini_response(jd, resume_text):
     Resume:
     {resume_text}
 
-    Act as an experienced ATS (Applicant Tracking System) with a deep understanding of various technical roles and industries such as software engineering, data science, cybersecurity, DevOps, and more. Evaluate the provided resume in alignment with the given job description for the desired technical position. Strictly adhere to the specific job description, required skills, technologies, and responsibilities mentioned. If the job aligns with technical domains like web development, machine learning, cloud computing, or others, focus your analysis specifically on those areas. Considering the competitiveness of the job market, help improve the resume by:
-    - Assigning a percentage match based on the job description.
-    - Identifying missing technical keywords with high accuracy.
-    - Anticipating potential technical interview questions with suggested keywords to use in answers, instead of providing full answers.
-    - Suggesting project topics to work on based on gaps or needed expansions from the projects listed in the resume.
-    - Highlighting specific experiences or accomplishments to emphasize in the resume.
-    - Generating practice questions related to the projects listed in the resume to help the candidate prepare for potential project-related questions during interviews.
-
-    Additionally, for roles in the arts, science, and commerce fields:
-    - Assign a percentage match based on the job description.
-    - Identify missing academic keywords with high accuracy.
-    - Anticipate potential interview questions with suggested keywords to use in answers, instead of providing full answers.
-    - Suggest research or project topics to work on based on gaps or needed expansions from the projects listed in the resume.
-    - Highlight specific experiences or accomplishments to emphasize in the resume.
-    - Generating practice questions related to the projects listed in the resume to help the candidate prepare for potential project-related questions during interviews.
-
+    Analyze the provided resume for potential improvements:
+    - **Skills to Add**: Consider adding skills such as Python programming, machine learning, cloud computing, and agile development.
+    - **Technical Content**: Include more technical details about projects, emphasizing tools and methodologies used.
+    - **General Improvements**: Address formatting errors, ensure consistent use of industry-specific vocabulary, and replace generic words with precise technical terms.
+    - **Vocabulary Enhancement**: Replace vague words like "helped" with specific action verbs such as "developed" or "implemented".
+    - **Word Usage**: Use active voice and quantify achievements where possible (e.g., "Led a team of 5 developers" instead of "Managed a team").
+    
     Please format your response as follows:
     {{
         "JD_Match": "Percentage",
-        "Missing_Technical_Keywords": [
-            "Keyword1",
-            "Keyword2"
-        ],
-        "Missing_Academic_Keywords": [
-            "Keyword1",
-            "Keyword2"
+        "Keywords": [
+            "Technical: Keyword1, Keyword2",
+            "Suggested: Keyword3, Keyword4"
         ],
         "Technical_Skills_Summary_Suggestions": "Suggestions for enhancing the technical skills section",
         "Skills_Summary_Suggestions": "Suggestions for enhancing the skills section",
@@ -68,7 +55,7 @@ def get_gemini_response(jd, resume_text):
                 "Keywords": ["Keyword9", "Keyword10"]
             }}
         ],
-        "Potential_Interview_Questions": [
+        "Potential_HR_Interview_Questions": [
             {{
                 "Question": "Interview question 1",
                 "Keywords": ["Keyword1", "Keyword2"]
@@ -94,17 +81,14 @@ def get_gemini_response(jd, resume_text):
             "Project mentioned in the resume",
             "Another project mentioned in the resume"
         ],
-        "Projects_Required": [
-            "Project mentioned in the resume",
-            "Another project mentioned in the resume"
-        ],
+      
         "Suggested_Project_Topics": [
-            "Topic 1 based on existing projects to expand",
-            "New Topic 2 related to job requirements"
+            "Project Topic 1 based on existing projects to expand",
+            "New Project Topic 2 related to job requirements"
         ],
         "Suggested_Research_Topics": [
-            "Topic 1 based on existing projects to expand",
-            "New Topic 2 related to job requirements"
+            "Research Topic 1 based on existing projects to expand",
+            "New Research Topic 2 related to job requirements"
         ],
         "Technical_Experience_Required": {{
             "Years_of_Experience": "Years of experience if mentioned in the resume",
@@ -166,13 +150,13 @@ if submit:
             st.markdown("### Detailed Analysis Report")
             
             st.markdown(f"#### Job Description and Resume Match Percentage")
-            st.markdown(f"**{analysis_json.get('JD_Match', 'Match Percentage not available.')}**")
+            st.markdown(f"{analysis_json.get('JD_Match', 'Match Percentage not available.')}")
             
-            st.markdown("#### Missing Technical Keywords")
-            st.markdown(", ".join(analysis_json.get('Missing_Technical_Keywords', ['No missing technical keywords.'])))
-            
-            st.markdown("#### Missing Academic Keywords")
-            st.markdown(", ".join(analysis_json.get('Missing_Academic_Keywords', ['No missing academic keywords.'])))
+            st.markdown("#### Keywords")
+            keywords = analysis_json.get('Keywords', [])
+            st.markdown("**Keywords:**")
+            for keyword in keywords:
+                st.markdown(f"- {keyword}")
             
             st.markdown("#### Technical Skills Summary Suggestions")
             st.markdown(analysis_json.get('Technical_Skills_Summary_Suggestions', 'No suggestions available.'))
@@ -182,17 +166,14 @@ if submit:
             
             st.markdown("#### Potential Technical Interview Questions")
             for question in analysis_json.get('Potential_Technical_Interview_Questions', []):
-                st.markdown(f"- **{question['Question']}** (Keywords: {', '.join(question['Keywords'])})")
+                st.markdown(f"- {question['Question']} (Keywords: {', '.join(question['Keywords'])})")
             
-            st.markdown("#### Potential Interview Questions")
-            for question in analysis_json.get('Potential_Interview_Questions', []):
-                st.markdown(f"- **{question['Question']}** (Keywords: {', '.join(question['Keywords'])})")
+            st.markdown("#### Potential HR Interview Questions")
+            for question in analysis_json.get('Potential_HR_Interview_Questions', []):
+                st.markdown(f"- {question['Question']} (Keywords: {', '.join(question['Keywords'])})")
             
             st.markdown("#### Technical Projects Required")
             st.markdown(", ".join(analysis_json.get('Technical_Projects_Required', ['No technical projects required.'])))
-            
-            st.markdown("#### Projects Required")
-            st.markdown(", ".join(analysis_json.get('Projects_Required', ['No projects required.'])))
             
             st.markdown("#### Suggested Project Topics")
             st.markdown(", ".join(analysis_json.get('Suggested_Project_Topics', ['No suggested project topics.'])))
@@ -205,7 +186,7 @@ if submit:
             
             st.markdown("#### Practice Questions for Projects")
             for project, questions in analysis_json.get('Project_Practice_Questions', {}).items():
-                st.markdown(f"**{project}:**")
+                st.markdown(f"{project}:")
                 for question in questions:
                     st.markdown(f"- {question}")
         except json.JSONDecodeError:
